@@ -1,12 +1,11 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import base64
 import time
 
 app = FastAPI()
 
-# تفعيل الربط مع الواجهة الأمامية (CORS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,40 +17,36 @@ class FLambdaCore:
     F_LAMBDA = 15.0725
 
     @staticmethod
-    def encode(data: str):
-        raw_bytes = data.encode('utf-8')
-        signals = [float(f"{(b * FLambdaCore.F_LAMBDA + (i + 1)) % 1.0:.12f}") for i, b in enumerate(raw_bytes)]
-        return signals
+    def process_bytes(data: bytes):
+        # تحويل البايتات إلى إشارات طيفية حتمية
+        signals = [float(f"{(b * FLambdaCore.F_LAMBDA + (i + 1)) % 1.0:.12f}") for i, b in enumerate(data)]
+        return signals[:100] # نرسل عينة فقط للعرض لتوفير الجهد
 
-    @staticmethod
-    def decode(signals):
-        reconstructed = bytearray()
-        for i, sig in enumerate(signals):
-            for b in range(256):
-                if abs(((b * FLambdaCore.F_LAMBDA + (i + 1)) % 1.0) - sig) < 1e-9:
-                    reconstructed.append(b)
-                    break
-        return reconstructed.decode('utf-8', errors='ignore')
-
-class DataInput(BaseModel):
-    content: str
-
-@app.get("/")
-def status():
-    return {"status": "Online", "engine": "F-Lambda v3.0"}
-
-@app.post("/process")
-def process(data: DataInput):
-    start = time.time()
-    sigs = FLambdaCore.encode(data.content)
-    rec = FLambdaCore.decode(sigs)
-    return {
-        "success": True,
-        "processing_time": f"{time.time() - start:.4f}s",
-        "integrity": data.content == rec,
-        "signatures": sigs[:5],
-        "recovered_content": rec
-    }
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    start_time = time.time()
+    try:
+        # قراءة محتوى الملف (سواء كان صورة أو فيديو أو غيره)
+        contents = await file.read()
+        file_size = len(contents)
+        
+        # معالجة البيانات
+        signatures = FLambdaCore.process_bytes(contents)
+        
+        # تحويل الملف إلى Base64 لعرضه مرة أخرى في الواجهة (الاسترداد)
+        encoded_content = base64.b64encode(contents).decode('utf-8')
+        
+        return {
+            "success": True,
+            "filename": file.filename,
+            "content_type": file.content_type,
+            "size_bytes": file_size,
+            "processing_time": f"{time.time() - start_time:.4f}s",
+            "signatures": signatures,
+            "recovered_file": encoded_content
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
