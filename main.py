@@ -6,7 +6,7 @@ import time
 
 # High precision
 decimal.getcontext().prec = 80
-FRACTAL_CONSTANT = decimal.Decimal("74899")
+FRACTAL_CONSTANT = decimal.Decimal("15.0725")
 
 app = FastAPI()
 
