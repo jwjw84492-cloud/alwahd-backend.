@@ -1,4 +1,29 @@
-node_modules/
-dist/
-build/
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
 .env
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.egg
+*.egg-info/
+*.whl
+
+# Logs and local database
+*.log
+*.sqlite3
+*.db
+
+# Render / deployment temporary files
+*.tmp
+*.swp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
