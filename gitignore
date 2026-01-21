@@ -1,27 +1,25 @@
-# Python cache files
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
-
-# Virtual environment
-venv/
-env/
-.env
-
-# Byte-compiled / optimized / DLL files
 *.so
 *.egg
 *.egg-info/
 *.whl
 
-# Logs and local database
-*.log
-*.sqlite3
-*.db
+# Virtual environments
+venv/
+env/
+.env
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# Logs / Databases
+*.log
+*.sqlite3
+*.db
 
 # Temporary / swap files
 *.tmp
