@@ -19,11 +19,11 @@ env/
 *.sqlite3
 *.db
 
-# Render / deployment temporary files
-*.tmp
-*.swp
-*.bak
-
 # OS files
 .DS_Store
 Thumbs.db
+
+# Temporary / swap files
+*.tmp
+*.swp
+*.bak
