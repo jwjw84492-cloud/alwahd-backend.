@@ -1,4 +1,6 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.py[cod]
 *.pyo
@@ -7,21 +9,31 @@ __pycache__/
 *.egg-info/
 *.whl
 
-# Virtual environments
+# =========================
+# Virtual Environments
+# =========================
 venv/
 env/
 .env
 
-# OS files
+# =========================
+# OS Generated Files
+# =========================
 .DS_Store
 Thumbs.db
+*.swp
 
-# Logs / Databases
+# =========================
+# Logs and Databases
+# =========================
 *.log
 *.sqlite3
 *.db
-
-# Temporary / swap files
-*.tmp
-*.swp
 *.bak
+
+# =========================
+# Node / Frontend (if any)
+# =========================
+node_modules/
+dist/
+build/
